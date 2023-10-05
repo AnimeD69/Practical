@@ -1,0 +1,23 @@
+from modeller import *
+
+env = Environ()
+aln = Alignment(env)
+mdl = Model(env, file='7l6k', model_segment=('FIRST:A','LAST:A'))
+aln.append_model(mdl,align_codes='7l6k', atom_files='7l6k.pdb')
+aln.append(file='protein.ali', align_codes='APOL')
+aln.align2d(max_gap_length=50)
+aln.write(file='target_template.ali',alignment_format='PIR')
+-----
+from modeller import *
+from modeller.automodel import *
+#from modeller import soap_protein_od
+
+env = Environ()
+a=AutoModel(env, alnfile='target_template.ali',
+	      knowns='7l6k',sequence='APOL',
+	      assess_methods=(assess.DOPE,
+				#soap_protein_od.Scorer(),
+				assess.GA341))
+a.starting_model = 1
+a.ending_model = 5
+a.make()
